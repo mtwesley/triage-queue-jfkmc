@@ -1,0 +1,6 @@
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+  var socket = io('');
+  socket.on('connect', function() { alert('Client connected.') });
+  socket.on('disconnect', function() { alert('Client disconnected.') });
+</script>

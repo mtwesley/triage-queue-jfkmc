@@ -1,0 +1,22 @@
+{
+  "name": "jfk-triage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://mtwesley@bitbucket.org/mtwesley/jfk-triage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/mtwesley/jfk-triage#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "nunjucks": "^2.1.0",
+    "redis": "^2.0.1",
+    "socket.io": "^1.3.7"
+  }
+}
