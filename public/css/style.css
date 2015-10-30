@@ -1,0 +1,399 @@
+/* general elements */
+* {
+	margin:0;
+	padding:0;
+}
+
+body {
+	font: .8em "arial", sans-serif;
+	background: #fff;
+	color: #1E1E1E;
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: underline;
+}
+
+img {
+	border:0px;
+	}
+
+.rounded{
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+
+/* type styles*/
+@font-face {
+    font-family: helveticaBoldCondensed;
+    src: url(/fonts/helvetica.otf);
+}
+.text_a,
+.text_a a:link,
+.text_a a:visited,
+.text_a a:hover,
+.text_a a:active {
+	font: 20px "helveticaBoldCondensed", sans-serif;
+	padding: 0px;
+	text-decoration: none;
+	}
+.text_b,
+.text_b a:link,
+.text_b a:visited,
+.text_b a:hover,
+.text_b a:active {
+	font: 28px "helveticaBoldCondensed", sans-serif;
+	padding: 0px;
+	text-decoration: none;
+	}
+.text_c,
+.text_c a:link,
+.text_c a:visited,
+.text_c a:hover,
+.text_c a:active {
+	font: 16px "arial", sans-serif;
+	font-weight: bold;
+	padding: 0px;
+	text-decoration: none;
+	}
+.text_d,
+.text_d a:link,
+.text_d a:visited,
+.text_d a:hover,
+.text_d a:active {
+	font: 60px "helveticaBoldCondensed", sans-serif;
+	padding: 0px;
+	text-decoration: none;
+	}
+
+/* colors */
+.white,
+.white a:link,
+.white a:visited{
+	color: #fff;
+}
+
+.blue,
+.blue a:link,
+.blue a:visited{
+	color: #151D4A;
+}
+
+.lightblue,
+.lightblue a:link,
+.lightblue a:visited{
+	color: #00A2BD;
+}
+
+.green,
+.green a:link,
+.green a:visited{
+	color: #179F49;
+}
+
+.pink,
+.pink a:link,
+.pink a:visited{
+	color: #EF4875;
+}
+
+.red,
+.red a:link,
+.red a:visited{
+	color: #D72128;
+}
+
+.gray,
+.gray a:link,
+.gray a:visited{
+	color: #7F7F7F;
+}
+
+/* body*/
+#wrapper{
+	width:1000px;
+	margin:0px auto 0;
+	/*  min-height: 100%;  */
+}
+
+#header{
+	float:left;
+	width:1000px;
+	height:120px;
+	margin:0px;
+	padding:0px;
+	background: url('/images/head01.jpg') no-repeat 0 0;
+}
+
+#datetime{
+	float:left;
+	width: 220px;
+	margin:75px 0px 0px 730px;
+	padding:0px;
+	text-align: right;
+}
+
+#content01{
+	float:left;
+	width:920px;
+	margin:20px 0px 0px 50px;
+	padding:0px;
+	background: #fff;
+	border-bottom: 1px solid #151D4A;
+}
+
+.window01{
+	float:left;
+	width:198px;
+	height: 138px;
+	margin:0px 15px 20px 15px;
+	padding:0px;
+	background: #00A2BD;
+	border: 1px solid #151D4A;
+}
+
+.window02{
+	float:left;
+	width:198px;
+	height: 138px;
+	margin:0px 15px 20px 15px;
+	padding:0px;
+	background: #EF4875;
+	border: 1px solid #151D4A;
+}
+
+.window03{
+	float:left;
+	width:198px;
+	height: 138px;
+	margin:0px 15px 20px 15px;
+	padding:0px;
+	background: #7F7F7F;
+	border: 1px solid #151D4A;
+}
+
+.windowStatus{
+	float:left;
+	width:198px;
+	height: 60px;
+	margin:0px;
+	padding:30px 0px 0px 0px;
+	background: #fff;
+	text-align:center;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.available:hover,
+.available:active {
+	background: #179F49;
+	color: #fff;
+}
+
+.windowName{
+	float:left;
+	width:178px;
+	height: 25px;
+	margin:15px 0px 0px 10px;
+	padding:0px;
+	text-align:left;
+}
+
+#content02{
+	float:left;
+	width:920px;
+	margin:20px 0px 0px 50px;
+	padding:0px;
+}
+
+.queue01{
+	float:left;
+	width:428px;
+	height: 63px;
+	margin:0px 15px 20px 15px;
+	padding:0px;
+	background: #00A2BD;
+}
+
+.queue02{
+	float:left;
+	width:430px;
+	height: 65px;
+	margin:0px 15px 20px 15px;
+	padding:0px;
+	background: #EF4875;
+}
+
+.queueName{
+	float:left;
+	width:120px;
+	margin: 15px 0px 0px 20px;
+	padding:0px;
+}
+
+.queueNext{
+	float:left;
+	margin:15px 15px 20px 15px;
+	padding:0px;
+}
+
+#content03{
+	float:left;
+	width:460px;
+	margin:0px 0px 0px 50px;
+	padding:0px;
+}
+
+#content04{
+	float:left;
+	width:460px;
+	margin:0px 0px 0px 0px;
+	padding:0px;
+}
+
+.skip{
+	float:left;
+	width:100px;
+	margin:0px 0px 0px 170px;
+	padding: 10px;
+	background: #D72128;
+	text-align:center;
+	border: 1px solid #151D4A;
+}
+.skip:hover,
+.skip:active {
+	background: #fff;
+	color: #D72128;
+	border: 1px solid #151D4A;
+}
+
+
+/* window operator elements */
+.windowTitle{
+	float:left;
+	clear: both;
+	margin: 15px;
+}
+
+.windowSetStatus{
+	float:left;
+	margin: 0px 10px 20px 10px;
+	padding: 5px 10px 5px 10px;
+	text-align:center;
+	background: #151D4A;
+	border: 1px solid #151d4a;
+	cursor: default;
+}
+
+.windowButton{
+	float:left;
+	margin: 0px 10px 20px 10px;
+	padding: 5px 10px 5px 10px;
+	text-align:center;
+	background: #fff;
+	border: 1px solid #151D4A;
+	cursor: pointer;
+}
+
+.windowButton:hover,
+.windowButton:active {
+	background: #179F49;
+	color: #fff;
+}
+
+
+
+/* ticket distributor elements */
+#wrapper2{
+	width:320px;
+	margin:0px auto 0;
+}
+
+.content05{
+	float: left;
+	width:320px;
+	margin:20px 0px 20px 0px;
+	padding:0px;
+	background: #fff;
+	text-align: center;
+}
+
+.content06{
+	float: left;
+	width:320px;
+	margin: 0px 0px 0px 60px;
+	padding:0px;
+	background: #fff;
+	text-align: center;
+}
+
+.queueMemorial{
+	float: left;
+	width:198px;
+	height: 112px;
+	margin: 0px 0px 0px 60px;
+	padding:0px;
+	background: #00A2BD;
+	border: 1px solid #151D4A;
+	cursor: pointer;
+}
+
+.queueMaternity{
+	float: left;
+	width:198px;
+	height: 112px;
+	margin: 0px 0px 0px 60px;
+	padding:0px;
+	background: #EF4875;
+	border: 1px solid #151D4A;
+	cursor: pointer;
+}
+
+.queueStatus{
+	float:left;
+	width:198px;
+	height: 52px;
+	margin:0px;
+	padding: 5px 0px 0px 0px;
+	text-align:center;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.queueName2{
+	float:left;
+	width:198px;
+	height: 25px;
+	margin: 25px 0px 0px 0px;
+	padding:0px;
+	text-align:center;
+}
+
+.ticketButton{
+	float:left;
+	width: 80px;
+	margin: 10px 15px 40px 0px;
+	padding: 5px;
+	text-align:center;
+	background: #151D4A;
+	border: 1px solid #151D4A;
+	cursor: pointer;
+}
+
+.ticketButton:hover,
+.ticketButton:active {
+	background: #179F49;
+	color: #fff;
+}

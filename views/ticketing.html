@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="Author" content="" />
+		<meta name="Description" content="" />
+		<meta name="keywords" content="JFKMC Triage Queue">
+		<link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" />
+		<title>JFKMC Triage Queue System - Ticket Distributor</title>
+		<link href="/css/style.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+		<script type="text/javascript">
+      var socket = io('');
+
+			var queues = JSON.parse('{{ queues|safe }}');
+			var numbers = {}
+
+			socket.on('connect', function(data) {});
+			socket.on('[eel]', function(data) {});
+
+			for (queue in queues) {
+				socket.emit('peek', { 'queue': queue, 'reverse': true }, function(data) {
+					numbers[data.queue] = (parseInt(data.number) || 0) + 1; 
+					update_number(data.queue);
+				});
+			}
+
+			function increase_number(queue) {
+				test = numbers[queue] + 1;
+				numbers[queue] = test > 0 ? test : 0;
+			}
+
+			function decrease_number(queue) {
+				test = numbers[queue] - 1;
+				numbers[queue] = test > 0 ? test : 0;
+			}
+
+			function update_number(queue) {
+				$('#queue-' + queue + '-number').text(numbers[queue]);
+			}
+
+			$(document).ready(function() {
+				for (queue in queues) update_number(queue);
+
+				$('.number-increase').click(function() {
+					queue = $(this).data('queue');
+					increase_number(queue);
+					update_number(queue);
+				});
+
+				$('.number-decrease').click(function() {
+					queue = $(this).data('queue');
+					decrease_number(queue);
+					update_number(queue);
+				});
+
+				$('.push-number').click(function() {
+					queue = $(this).data('queue');
+					socket.emit('push', {
+	          'client': 'ticketing',
+	          'queue': queue,
+						'number': numbers[queue]
+	        }, function(data) { increase_number(queue); update_number(queue); });
+				})
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="wrapper2">
+			<div class="content05 text_a blue">
+				Triage Queue System
+			</div>
+
+			<div class="queueMemorial push-number rounded" data-queue="hospital">
+				<div class="queueStatus text_d white">
+					<span id="queue-hospital-number">N/A</span>
+				</div>
+				<div class="queueName2 text_c white">
+					Memorial Hospital
+				</div>
+			</div>
+
+			<div class="content06 text_a blue">
+				<div class="ticketButton number-increase rounded text_b white" data-queue="hospital">
+					+
+				</div>
+				<div class="ticketButton number-decrease rounded text_b white" data-queue="hospital">
+					-
+				</div>
+			</div>
+
+			<div class="queueMaternity push-number rounded" data-queue="maternity">
+				<div class="queueStatus text_d white">
+					<span id="queue-maternity-number">N/A</span>
+				</div>
+				<div class="queueName2 text_c white">
+					Maternity Center
+				</div>
+			</div>
+
+			<div class="content06 text_a blue">
+				<div class="ticketButton number-increase rounded text_b white" data-queue="maternity">
+					+
+				</div>
+				<div class="ticketButton number-decrease rounded text_b white" data-queue="maternity">
+					-
+				</div>
+			</div>
+
+		</div>
+	</body>
+</html>

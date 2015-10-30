@@ -1,6 +1,23 @@
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
   var socket = io('');
-  socket.on('connect', function() { alert('Client connected.') });
-  socket.on('disconnect', function() { alert('Client disconnected.') });
+
+  var queues = {
+    'hospital' : [],
+    'maternity': []
+  };
+
+  // socket.on('connect', function() { alert('Server connected client.') });
+  // socket.on('disconnect', function() { alert('Server disconnectd client.') });
+
+  socket.on('push', function(data) {
+    queues[data.queue].push(data.number);
+  });
+
+  socket.on('pop', function(data) {
+    queues[data.queue].shift();
+  });
+
+
+
 </script>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="Author" content="" />
+		<meta name="Description" content="" />
+		<meta name="keywords" content="JFKMC Triage Queue">
+		<!-- link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" /-->
+		<title>JFKMC Triage Queue System - Window Operator</title>
+		<link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript">
+      var socket = io('');
+
+      var id = {{ id }};
+			var queues = JSON.parse('{{ queues|safe }}');
+      var queue = '{{ queue|safe }}';
+      var number = parseInt('{{ number|safe }}');
+
+      socket.on('connect', function(data) {});
+
+      socket.on('attach', function(data) {
+				number = data.number;
+				update_number();
+			});
+
+      function update_number() {
+        if (number && queue) {
+					$('#number').text('Serving ' + number + queues[queue].code);
+					$('#number-holder').show();
+					$('#number-holder').attr('class', 'windowSetStatus rounded text_b white');
+					$('#status-holder').attr('class', 'windowButton available-click rounded text_b blue');
+				}
+				else if (queue) {
+					$('#number-holder').hide();
+					$('#number').text('N/A');
+					$('#status-holder').attr('class', 'windowSetStatus available-click rounded text_b white');
+					$('#number-holder').attr('class', 'windowButton rounded text_b blue');
+				}
+        else {
+					$('#number-holder').hide();
+					$('#number').text('N/A');
+					$('#number-holder').attr('class', 'windowButton rounded text_b white');
+					$('#status-holder').attr('class', 'windowButton available-click rounded text_b blue');
+				}
+      }
+
+      function detach() {
+        number = null;
+        update_number();
+
+        socket.emit('detach', {
+          'client': 'window',
+          'id': id,
+          'number': number,
+          'queue': queue
+        });
+      }
+
+      function login() {
+        socket.emit('login', {
+          'client': 'window',
+          'id': id,
+          'queue': queue
+        });
+      }
+
+      function logout() {
+        socket.emit('logout', {
+          'client': 'window',
+          'id': id,
+          'queue': queue
+        });
+      }
+
+			$(document).ready(function() {
+				update_number();
+
+				$('.queue-click').click(function() {
+					if (queue != $(this).data('queue')) {
+						if (queue) {
+							if (number) detach();
+							logout();
+						}
+						queue = $(this).data('queue');
+						login();
+						$('.queue-click').attr('class', 'windowButton rounded text_b blue queue-click');
+						$('#queue-' + queue).attr('class', 'windowSetStatus rounded text_b white queue-click');
+						update_number();
+					}
+				});
+
+				$('.available-click').click(function() {
+					detach();
+					update_number();
+				});
+
+			});
+    </script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="header">
+				<div id="datetime" class="text_c blue">
+					{{ date }}
+				</div>
+			</div>
+
+			<div id="content01">
+				<div class="windowTitle text_b blue">
+					Window {{ id }}
+				</div>
+
+				<br><br>
+
+				<div class="windowTitle text_b blue">
+					Set Role:
+				</div>
+				<div id="queue-hospital" class="windowButton rounded text_b blue queue-click" data-queue="hospital">
+					Memorial Hospital
+				</div>
+				<div id="queue-maternity" class="windowButton rounded text_b blue queue-click" data-queue="maternity">
+					Maternity Center
+				</div>
+
+				<br><br>
+
+				<div class="windowTitle text_b blue">
+					Set Status:
+				</div>
+				<div id="number-holder" class="windowButton rounded text_b blue">
+					<span id="number">N/A</span>
+				</div>
+				<div id="status-holder" class="windowSetStatus available-click rounded text_b white available-click">
+					Available
+				</div>
+
+
+			</div>
+
+		</div>
+	</body>
+</html>

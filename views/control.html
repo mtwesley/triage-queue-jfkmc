@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="Author" content="" />
+		<meta name="Description" content="" />
+		<meta name="keywords" content="JFKMC Triage Queue System">
+		<!-- link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" /-->
+		<title>JFKMC Triage Queue - Administrator</title>
+		<link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+      var socket = io('');
+
+      var windows;
+
+      var queues = {
+        'hospital' : [],
+        'maternity': []
+      };
+
+      socket.on('connect', function(data) {});
+      socket.on('disconnect', function(data) {});
+
+      socket.on('push', function(data) {});
+      socket.on('pop', function(data) {});
+
+      function attach(id, number, queue) {
+        socket.emit('attach', {
+          'client': 'control',
+          'id': id,
+          'number': number,
+          'queue': queue
+        })
+      }
+
+      function detach(id, number, queue) {
+
+      }
+
+      function push(number, queue) {
+        queues[data.queue].push(data.number);
+      }
+
+      function pop(queue) {
+        queues[data.queue].shift();
+      }
+
+    </script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="header">
+				<div id="datetime" class="text_c blue">
+					{{ date }}
+				</div>
+			</div>
+
+			<div id="content01">
+				<div class="window01 rounded">
+					<div class="windowStatus text_b gray">
+						Serving 000H
+					</div>
+					<div class="windowName text_c white">
+						Window 1
+					</div>
+				</div>
+				<div class="window01 rounded">
+					<div class="windowStatus text_b gray">
+						Serving 000H
+					</div>
+					<div class="windowName text_c white">
+						Window 2
+					</div>
+				</div>
+				<div class="window01 rounded">
+					<div class="windowStatus available text_b green">
+						Available
+					</div>
+					<div class="windowName text_c white">
+						Window 3
+					</div>
+				</div>
+				<div class="window01 rounded">
+					<div class="windowStatus text_b gray">
+						Serving 000H
+					</div>
+					<div class="windowName text_c white">
+						Window 4
+					</div>
+				</div>
+				<div class="window02 rounded">
+					<div class="windowStatus available text_b green">
+						Available
+					</div>
+					<div class="windowName text_c white">
+						Window 5
+					</div>
+				</div>
+				<div class="window02 rounded">
+					<div class="windowStatus text_b gray">
+						Serving 000M
+					</div>
+					<div class="windowName text_c white">
+						Window 6
+					</div>
+				</div>
+				<div class="window02 rounded">
+					<div class="windowStatus text_b gray">
+						Serving 000M
+					</div>
+					<div class="windowName text_c white">
+						Window 7
+					</div>
+				</div>
+				<div class="window03 rounded">
+					<div class="windowStatus text_b gray">
+						Closed
+					</div>
+					<div class="windowName text_c white">
+						Window 8
+					</div>
+				</div>
+			</div>
+
+			<div id="content02">
+				<div class="queue01 rounded">
+					<div class="queueName text_c white">
+						Memorial<br>Hospital
+					</div>
+					<div class="queueNext text_b white">
+						Next in line: 000H
+					</div>
+				</div>
+				<div class="queue02 rounded">
+					<div class="queueName text_c white">
+						Maternity<br>Center
+					</div>
+					<div class="queueNext text_b white">
+						Next in line: 000M
+					</div>
+				</div>
+			</div>
+
+			<div id="content03">
+				<div class="skip text_c white rounded">
+					SKIP 000H
+				</div>
+			</div>
+
+			<div id="content04">
+				<div class="skip text_c white rounded">
+					SKIP 000M
+				</div>
+			</div>
+
+		</div>
+	</body>
+</html>
