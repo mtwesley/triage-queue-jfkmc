@@ -19,13 +19,6 @@
 			socket.on('connect', function(data) {});
 			socket.on('[eel]', function(data) {});
 
-			for (queue in queues) {
-				socket.emit('peek', { 'queue': queue, 'reverse': true }, function(data) {
-					numbers[data.queue] = (parseInt(data.number) || 0) + 1; 
-					update_number(data.queue);
-				});
-			}
-
 			function increase_number(queue) {
 				test = numbers[queue] + 1;
 				numbers[queue] = test > 0 ? test : 0;
@@ -37,11 +30,18 @@
 			}
 
 			function update_number(queue) {
-				$('#queue-' + queue + '-number').text(numbers[queue]);
+				$('#queue-' + queue + '-number').text(numbers[queue] + queues[queue]['code']);
 			}
 
 			$(document).ready(function() {
-				for (queue in queues) update_number(queue);
+				for (queue in queues) {
+					socket.emit('peek', { 'queue': queue, 'reverse': true }, function(data) {
+						numbers[data.queue] = (parseInt(data.number) || 0) + 1;
+						update_number(data.queue);
+					});
+				}
+
+				// for (queue in queues) update_number(queue);
 
 				$('.number-increase').click(function() {
 					queue = $(this).data('queue');

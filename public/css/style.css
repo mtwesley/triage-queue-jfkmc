@@ -150,27 +150,7 @@ img {
 	border-bottom: 1px solid #151D4A;
 }
 
-.window01{
-	float:left;
-	width:198px;
-	height: 138px;
-	margin:0px 15px 20px 15px;
-	padding:0px;
-	background: #00A2BD;
-	border: 1px solid #151D4A;
-}
-
-.window02{
-	float:left;
-	width:198px;
-	height: 138px;
-	margin:0px 15px 20px 15px;
-	padding:0px;
-	background: #EF4875;
-	border: 1px solid #151D4A;
-}
-
-.window03{
+.window {
 	float:left;
 	width:198px;
 	height: 138px;
@@ -180,7 +160,20 @@ img {
 	border: 1px solid #151D4A;
 }
 
-.windowStatus{
+.window-serving {
+	background: #00A2BD;
+}
+
+.window-available {
+	background: #EF4875;
+}
+
+.window-closed {
+	background: #7F7F7F;
+	border: 1px solid #151D4A;
+}
+
+.windowStatus {
 	float:left;
 	width:198px;
 	height: 60px;
@@ -192,6 +185,10 @@ img {
 	-moz-border-radius-topright: 5px;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
+}
+
+.available {
+	cursor: pointer;
 }
 
 .available:hover,
@@ -269,6 +266,7 @@ img {
 	background: #D72128;
 	text-align:center;
 	border: 1px solid #151D4A;
+	cursor: pointer;
 }
 .skip:hover,
 .skip:active {

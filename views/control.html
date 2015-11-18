@@ -9,15 +9,14 @@
 		<title>JFKMC Triage Queue - Administrator</title>
 		<link href="/css/style.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript">
       var socket = io('');
 
-      var windows;
+      var window_status = {};
 
-      var queues = {
-        'hospital' : [],
-        'maternity': []
-      };
+			var queues = JSON.parse('{{ queues|safe }}');
+			var numbers = {}
 
       socket.on('connect', function(data) {});
       socket.on('disconnect', function(data) {});
@@ -25,26 +24,146 @@
       socket.on('push', function(data) {});
       socket.on('pop', function(data) {});
 
+			socket.on('login', function(data) {
+				update_status();
+				update_windows();
+			});
+
+			socket.on('logout', function(data) {
+				update_status();
+				update_windows();
+			});
+
+			socket.on('detach', function(data) {
+				update_status();
+				update_windows();
+			});
+
+			socket.on('status', function(data) {
+
+				update_status();
+				update_windows();
+			});
+
+			function update_number(queue) {
+				if (queues[queue]) {
+					$('.queue-' + queue + '-number').text(numbers[queue] + queues[queue]['code']);
+				}
+			}
+
+			function update_windows() {
+				for (i=1; i <= 8; i++) {
+					_window = 'window-' + i;
+
+					if (window_status[i] == null) {
+						// $('#' + _window).attr('class', 'window ' + _window +' rounded');
+						$('#' + _window + ' .windowStatus').attr('class', 'windowStatus text_b gray');
+						$('#' + _window + ' .windowStatus').text('Closed');
+						$('#' + _window + ' .windowStatus').removeClass('available');
+						$('#' + _window).css('background', '#7f7f7f');
+					}
+					else if (window_status[i]['number'] && window_status[i]['queue']) {
+						_number = window_status[i]['number'];
+						_queue = window_status[i]['queue'];
+
+						// $('#' + _window).attr('class', 'window ' + _window +' rounded');
+						$('#' + _window + ' .windowStatus').attr('class', 'windowStatus text_b gray');
+						$('#' + _window + ' .windowStatus').text('Serving ' + _number + queues[_queue]['code']);
+						$('#' + _window + ' .windowStatus').removeClass('available');
+						$('#' + _window).css('background', '#' + queues[_queue]['color']);
+					}
+					else {
+						// $('#' + _window).attr('class', 'window ' + _window +' rounded');
+						$('#' + _window + ' .windowStatus').attr('class', 'windowStatus text_b green');
+						$('#' + _window + ' .windowStatus').addClass('available');
+						$('#' + _window + ' .windowStatus').text('Available');
+						$('#' + _window).click(function() {
+							_window = $(this).data('window');
+							_queue = window_status[_window]['queue'];
+							_number = numbers[_queue];
+
+							attach(_window, _number, _queue);
+						});
+
+						if (window_status[i]['queue']) {
+							_queue = window_status[i]['queue'];
+							$('#' + _window).css('background', '#' + queues[_queue]['color']);
+						} else {
+							$('#' + _window).css('background', '#7f7f7f');
+						}
+
+					}
+				}
+			}
+
+			function update_queues() {
+				for (queue in queues) {
+					socket.emit('peek', { 'queue': queue, 'reverse': false }, function(data) {
+						numbers[data.queue] = (parseInt(data.number) || 0) + 1;
+						update_number(data.queue);
+					});
+				}
+			}
+
+			function update_status() {
+				socket.emit('status', { 'client': 'window' }, function(data) {
+					if (data) window_status = data;
+					update_windows();
+				});
+			}
+
       function attach(id, number, queue) {
+				socket.emit('pop', { 'queue': queue});
         socket.emit('attach', {
           'client': 'control',
           'id': id,
           'number': number,
           'queue': queue
-        })
+        }, function(data) {
+					update_status();
+					update_queues();
+					update_number();
+				});
       }
 
       function detach(id, number, queue) {
-
+				socket.emit('pop', { 'queue': queue}, function(data) {
+					update_status();
+					update_queues();
+					update_number();
+				});
       }
 
-      function push(number, queue) {
-        queues[data.queue].push(data.number);
+      // function push(number, queue) {
+      //   queues[data.queue].push(data.number);
+      // }
+			//
+      // function pop(queue) {
+      //   queues[data.queue].shift();
+      // }
+
+			function login() {
+        socket.emit('login', { 'client': 'control' });
       }
 
-      function pop(queue) {
-        queues[data.queue].shift();
+      function logout() {
+        socket.emit('logout', { 'client': 'control' });
       }
+
+			$(document).ready(function() {
+				login();
+
+				update_status();
+				update_queues();
+
+				$('.skip').click(function() {
+					_queue = $(this).data('queue');
+					socket.emit('pop', { 'queue': _queue }, function(data) {
+						update_queues();
+						update_number();
+					})
+				});
+			});
 
     </script>
 	</head>
@@ -57,64 +176,64 @@
 			</div>
 
 			<div id="content01">
-				<div class="window01 rounded">
-					<div class="windowStatus text_b gray">
-						Serving 000H
+				<div id="window-1" class="window window-1 rounded" data-window="1">
+					<div class="windowStatus text_b gray" data-window="1">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 1
 					</div>
 				</div>
-				<div class="window01 rounded">
-					<div class="windowStatus text_b gray">
-						Serving 000H
+				<div id="window-2" class="window window-2 rounded" data-window="2">
+					<div class="windowStatus text_b gray" data-window="2">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 2
 					</div>
 				</div>
-				<div class="window01 rounded">
-					<div class="windowStatus available text_b green">
-						Available
+				<div id="window-3" class="window window-3 rounded" data-window="3">
+					<div class="windowStatus text_b gray #green" data-window="3">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 3
 					</div>
 				</div>
-				<div class="window01 rounded">
-					<div class="windowStatus text_b gray">
-						Serving 000H
+				<div id="window-4" class="window window-4 rounded" data-window="4">
+					<div class="windowStatus text_b gray" data-window="4">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 4
 					</div>
 				</div>
-				<div class="window02 rounded">
-					<div class="windowStatus available text_b green">
-						Available
+				<div id="window-5" class="window window-5 rounded" data-window="5">
+					<div class="windowStatus text_b gray #green" data-window="5">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 5
 					</div>
 				</div>
-				<div class="window02 rounded">
-					<div class="windowStatus text_b gray">
-						Serving 000M
+				<div id="window-6" class="window window-6 rounded" data-window="6">
+					<div class="windowStatus text_b gray" data-window="6">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 6
 					</div>
 				</div>
-				<div class="window02 rounded">
-					<div class="windowStatus text_b gray">
-						Serving 000M
+				<div id="window-7" class="window window-7 rounded" data-window="7">
+					<div class="windowStatus text_b gray" data-window="7">
+						Closed
 					</div>
 					<div class="windowName text_c white">
 						Window 7
 					</div>
 				</div>
-				<div class="window03 rounded">
-					<div class="windowStatus text_b gray">
+				<div id="window-8" class="window window-8 rounded" data-window="8">
+					<div class="windowStatus text_b gray" data-window="8">
 						Closed
 					</div>
 					<div class="windowName text_c white">
@@ -129,7 +248,7 @@
 						Memorial<br>Hospital
 					</div>
 					<div class="queueNext text_b white">
-						Next in line: 000H
+						Next in line: <span class="queue-hospital-number">N/A</span>
 					</div>
 				</div>
 				<div class="queue02 rounded">
@@ -137,20 +256,20 @@
 						Maternity<br>Center
 					</div>
 					<div class="queueNext text_b white">
-						Next in line: 000M
+						Next in line: <span class="queue-maternity-number">N/A</span>
 					</div>
 				</div>
 			</div>
 
 			<div id="content03">
-				<div class="skip text_c white rounded">
-					SKIP 000H
+				<div class="skip text_c white rounded" data-queue="hospital">
+					SKIP <span class="skip-button queue-hospital-number">N/A</span>
 				</div>
 			</div>
 
 			<div id="content04">
-				<div class="skip text_c white rounded">
-					SKIP 000M
+				<div class="skip text_c white rounded" data-queue="maternity">
+					SKIP <span class="skip-button queue-maternity-number">N/A</span>
 				</div>
 			</div>
 

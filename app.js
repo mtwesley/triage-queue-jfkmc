@@ -63,34 +63,6 @@ app.get('/ticketing', function(req, res) {
 
 server.listen(7000);
 
-
-
-
-
-
-function detach(data) {
-  if (data.queue != window_status[data.id]['queue']) return;
-
-  window_status[data.id]['number'] = null;
-
-  if (data.client == 'control')
-    windows[data.number].emit('detach', {
-      'server': 'app',
-      'id': data.id,
-      'number': data.number,
-      'queue': data.queue
-    });
-
-  controls.forEach(function(socket) {
-    socket.emit('detach', {
-      'server': 'app',
-      'id': data.id,
-      'number': data.number,
-      'queue': data.queue
-    });
-  });
-}
-
 io.on('connection', function(socket) {
   console.log('Client connected.');
 
@@ -105,6 +77,15 @@ io.on('connection', function(socket) {
         'number': null,
         'queue': data.queue
       }
+
+      controls.forEach(function(socket) {
+        socket.emit('login', {
+          'server': 'app',
+          'id': data.id,
+          'queue': data.queue
+        });
+      });
+
       console.log('Client login from Window %s in Queue: %s)', data.id, queues[data.queue]['name']);
     }
     else if (data.client == 'control') {
@@ -117,6 +98,14 @@ io.on('connection', function(socket) {
     if (data.client == 'window') {
       delete windows[data.id];
       delete window_status[data.id];
+
+      controls.forEach(function(socket) {
+        socket.emit('logout', {
+          'server': 'app',
+          'id': data.id,
+          'queue': data.queue
+        });
+      });
       console.log('Client logout from Window %s in Queue: %s)', data.id, queues[data.queue]['name']);
     }
     else if (data.client == 'control') {
@@ -135,13 +124,13 @@ io.on('connection', function(socket) {
             'number': data.number
           });
         });
-        callback();
+        if (callback) callback();
         console.log('Client pushing %s to Queue: %s)', data.number, queues[data.queue]['name']);
       }
     });
   });
 
-  socket.on('pop', function(data) {
+  socket.on('pop', function(data, callback) {
     redis.lpop(data.queue, function(error, reply) {
       if (reply) controls.forEach(function(socket) {
         socket.emit('pop', {
@@ -149,6 +138,7 @@ io.on('connection', function(socket) {
           'queue': data.queue
         });
       });
+      if (callback) callback();
     });
   });
 
@@ -160,17 +150,17 @@ io.on('connection', function(socket) {
       //   'queue': data.queue,
       //   'number': reply
       // });
-      callback({'queue': data.queue, 'number': reply});
+      if (callback) callback({'queue': data.queue, 'number': reply});
     });
 
   });
 
-  socket.on('attach', function(data) {
+  socket.on('attach', function(data, callback) {
     if (data.queue != window_status[data.id]['queue']) return;
 
     window_status[data.id]['number'] = data.number;
 
-    windows[data.number].emit('attach', {
+    windows[data.id].emit('attach', {
       'server': 'app',
       'id': data.id,
       'number': data.number,
@@ -185,9 +175,37 @@ io.on('connection', function(socket) {
         'queue': data.queue
       });
     });
+
+    callback();
   });
 
-  socket.on('detach', detach);
+  socket.on('detach', function(data) {
+    if (data.queue != window_status[data.id]['queue']) return;
+
+    window_status[data.id]['number'] = null;
+
+    if (data.client == 'control')
+      windows[data.number].emit('detach', {
+        'server': 'app',
+        'id': data.id,
+        'number': data.number,
+        'queue': data.queue
+      });
+
+    controls.forEach(function(socket) {
+      socket.emit('detach', {
+        'server': 'app',
+        'id': data.id,
+        'number': data.number,
+        'queue': data.queue
+      });
+    });
+  });
+
+  socket.on('status', function(data, callback) {
+    if (data.client == 'window') callback(window_status);
+    else callback(null);
+  });
 
 });
 
