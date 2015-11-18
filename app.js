@@ -63,6 +63,14 @@ app.get('/ticketing', function(req, res) {
 
 server.listen(7000);
 
+function queueify(queue) {
+  return queue + '_test';
+}
+
+function maxify(queue) {
+  return queue + '_test_max';
+}
+
 io.on('connection', function(socket) {
   console.log('Client connected.');
 
@@ -115,8 +123,10 @@ io.on('connection', function(socket) {
   });
 
   socket.on('push', function(data, callback) {
-    redis.rpush(data.queue, data.number, function(error, reply) {
+    redis.incr(maxify(data.queue));
+    redis.rpush(queueify(data.queue), data.number, function(error, reply) {
       if (!error) {
+        console.log('Pushing number into queue');
         controls.forEach(function(socket) {
           socket.emit('push', {
             'server': 'app',
@@ -131,7 +141,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('pop', function(data, callback) {
-    redis.lpop(data.queue, function(error, reply) {
+    redis.lpop(queueify(data.queue), function(error, reply) {
       if (reply) controls.forEach(function(socket) {
         socket.emit('pop', {
           'server': 'app',
@@ -143,16 +153,16 @@ io.on('connection', function(socket) {
   });
 
   socket.on('peek', function(data, callback) {
-    range = data.reverse ? -1 : 0;
-    redis.lrange(data.queue, range, range, function(error, reply) {
-      // socket.emit('peek', {
-      //   'server': 'app',
-      //   'queue': data.queue,
-      //   'number': reply
-      // });
-      if (callback) callback({'queue': data.queue, 'number': reply});
-    });
-
+    range = 0;
+    if (data.max) {
+      redis.get(maxify(data.queue), function(error, reply) {
+        if (callback) callback({'queue': data.queue, 'number': reply});
+      });
+    } else {
+      redis.lrange(queueify(data.queue), range, range, function(error, reply) {
+        if (callback) callback({'queue': data.queue, 'number': reply});
+      });
+    }
   });
 
   socket.on('attach', function(data, callback) {

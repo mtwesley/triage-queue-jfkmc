@@ -33,14 +33,17 @@
 				$('#queue-' + queue + '-number').text(numbers[queue] + queues[queue]['code']);
 			}
 
-			$(document).ready(function() {
+			function update_queues() {
 				for (queue in queues) {
-					socket.emit('peek', { 'queue': queue, 'reverse': true }, function(data) {
+					socket.emit('peek', { 'queue': queue, 'reverse': true, 'max': true }, function(data) {
 						numbers[data.queue] = (parseInt(data.number) || 0) + 1;
 						update_number(data.queue);
 					});
 				}
+			}
 
+			$(document).ready(function() {
+				update_queues();
 				// for (queue in queues) update_number(queue);
 
 				$('.number-increase').click(function() {

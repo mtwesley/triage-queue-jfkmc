@@ -21,8 +21,15 @@
       socket.on('connect', function(data) {});
       socket.on('disconnect', function(data) {});
 
-      socket.on('push', function(data) {});
-      socket.on('pop', function(data) {});
+      socket.on('push', function(data) {
+				update_queues();
+				update_number();
+			});
+
+      socket.on('pop', function(data) {
+				update_queues();
+				update_number();
+			});
 
 			socket.on('login', function(data) {
 				update_status();
@@ -47,7 +54,11 @@
 
 			function update_number(queue) {
 				if (queues[queue]) {
-					$('.queue-' + queue + '-number').text(numbers[queue] + queues[queue]['code']);
+					if (numbers[queue]) {
+						$('.queue-' + queue + '-number').text(numbers[queue] + queues[queue]['code']);
+					} else {
+						$('.queue-' + queue + '-number').text('N/A');
+					}
 				}
 			}
 
@@ -98,8 +109,10 @@
 
 			function update_queues() {
 				for (queue in queues) {
-					socket.emit('peek', { 'queue': queue, 'reverse': false }, function(data) {
-						numbers[data.queue] = (parseInt(data.number) || 0) + 1;
+					socket.emit('peek', { 'queue': queue, 'reverse': false, 'max': false }, function(data) {
+						if (data.number) {
+							numbers[data.queue] = parseInt(data.number);
+						}
 						update_number(data.queue);
 					});
 				}
